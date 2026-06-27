@@ -12,7 +12,7 @@
 
 - [Node.js](https://nodejs.org/) 18+
 - [pnpm](https://pnpm.io/)
-- [Cloudflare 账号](https://dash.cloudflare.com/) 并开通 Workers、D1、R2
+- [Cloudflare 账号](https://dash.cloudflare.com/)
 
 ## 配置步骤
 
@@ -39,12 +39,16 @@ ADMIN_JSON='{"username":"admin","password":"你的密码"}'
 | `IMG_BED_URL` | 图床服务地址（如不使用可留空） |
 | `IMG_BED_TOKEN` | 图床 API 令牌（如不使用可留空） |
 
+图床仅支持[CloudFlare ImgBed](https://github.com/MarSeventh/CloudFlare-ImgBed)
+
 ## ⚠️ 安全警告
 
 **请勿将包含真实密钥的 `wrangler.toml` 提交到公开仓库。**
 
 - 敏感信息（`GITHUB_TOKEN`、`ADMIN_JSON`、`IMG_BED_TOKEN`）应通过 **Cloudflare Workers Secrets**（`npx wrangler secret put SECRET_NAME`）或 **`.dev.vars`** 管理
 - 如需将项目上传至代码仓库，**务必使用私有仓库**，或通过 CLI 管理密钥，确保密钥不会以明文形式出现在文件中
+
+因为此项目比较简陋，描写防御规则，IP限速等 api 容易被爆破，可以自己改一下，或者套Cloudflare Access
 
 ## 常用命令
 
