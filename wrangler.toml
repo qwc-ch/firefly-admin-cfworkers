@@ -1,0 +1,20 @@
+name = "blog-admin-cfworkers"
+main = "src/index.ts"
+compatibility_date = "2026-06-20"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "firefly-admin"
+database_id = "your-d1-database-id"
+
+[vars]
+GITHUB_OWNER = "your-github-username"
+GITHUB_REPO = "your-blog-repo"
+GITHUB_BRANCH = "main"
+POSTS_PATH = "src/content/posts"
+BLOG_URL = "https://your-blog.example.com"
+ADMIN_JSON = '{"username":"your-username","password":"your-password"}'
+GITHUB_TOKEN = "your-github-token"
+IMG_BED_URL = "https://your-image-bed.example.com"
+IMG_BED_TOKEN = "your-image-bed-token"
