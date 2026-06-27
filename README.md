@@ -55,7 +55,7 @@ ADMIN_JSON='{"username":"admin","password":"你的密码"}'
 可以直接写在wrangler.toml，或者在cf仪表台，手动加worker运行时密秘钥。
 更推荐用cli。
 
-因为此项目比较简陋，描写防御规则，IP限速等 api 容易被爆破，可以自己改一下，或者套Cloudflare Access
+因为此项目比较简陋，没写防御规则，IP限速等 前端认让页面 容易被爆破，可以自己改一下，或者套Cloudflare Access
 
 ## 常用命令
 
