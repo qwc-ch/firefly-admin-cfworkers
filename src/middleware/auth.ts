@@ -16,20 +16,7 @@ export async function verifyBasicAuth(c: Context<{ Bindings: Env }>): Promise<bo
   return username === adminUser.username && password === adminUser.password;
 }
 
-function clientIp(c: Context<{ Bindings: Env }>): string {
-  return c.req.header('cf-connecting-ip')
-    || c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
-    || 'unknown';
-}
-
-function allowedIps(env: Env): Set<string> {
-  return new Set((env.ADMIN_IPS || '').split(',').map(s => s.trim()).filter(Boolean));
-}
-
 export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) {
-  // Whitelisted IPs skip auth entirely
-  if (allowedIps(c.env).has(clientIp(c))) return next();
-
   const authHeader = c.req.header('Authorization');
   if (!authHeader) {
     return c.json({ error: 'Unauthorized' }, 401);

@@ -14,7 +14,6 @@ GITHUB_REPO = "your-blog-repo"
 GITHUB_BRANCH = "main"
 POSTS_PATH = "src/content/posts"
 BLOG_URL = "https://your-blog.example.com"
-ADMIN_IPS = "your-ip-address,optional-second-ip"
 ADMIN_JSON = '{"username":"your-username","password":"your-password"}'
 GITHUB_TOKEN = "your-github-token"
 IMG_BED_URL = "https://your-image-bed.example.com"

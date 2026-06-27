@@ -13,14 +13,8 @@ function clientIp(c: Context<{ Bindings: Env }>): string {
     || 'unknown';
 }
 
-function allowedIps(env: Env): Set<string> {
-  return new Set((env.ADMIN_IPS || '').split(',').map(s => s.trim()).filter(Boolean));
-}
-
 export async function rateLimiterAuth(c: Context<{ Bindings: Env }>, next: Next) {
-  const ip = clientIp(c);
-  if (allowedIps(c.env).has(ip)) return next();
-  const result = await checkRateLimit(c.env.DB, ip, 'auth', AUTH_LIMIT, AUTH_WINDOW);
+  const result = await checkRateLimit(c.env.DB, clientIp(c), 'auth', AUTH_LIMIT, AUTH_WINDOW);
   if (!result.allowed) {
     return c.json({ error: 'Too many attempts. Try again later.' }, 429);
   }
@@ -28,9 +22,7 @@ export async function rateLimiterAuth(c: Context<{ Bindings: Env }>, next: Next)
 }
 
 export async function rateLimiterApi(c: Context<{ Bindings: Env }>, next: Next) {
-  const ip = clientIp(c);
-  if (allowedIps(c.env).has(ip)) return next();
-  const result = await checkRateLimit(c.env.DB, ip, 'api', API_LIMIT, API_WINDOW);
+  const result = await checkRateLimit(c.env.DB, clientIp(c), 'api', API_LIMIT, API_WINDOW);
   if (!result.allowed) {
     return c.json({ error: 'Rate limit exceeded. Slow down.' }, 429);
   }
