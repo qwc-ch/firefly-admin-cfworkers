@@ -9,6 +9,7 @@ export interface Env {
   ADMIN_JSON: string;
   IMG_BED_URL: string;
   IMG_BED_TOKEN: string;
+  ADMIN_IPS: string;
 }
 
 export interface AdminUser {

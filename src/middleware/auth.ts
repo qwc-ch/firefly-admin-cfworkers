@@ -1,23 +1,49 @@
 import { Context, Next } from 'hono';
 import { Env } from '../types';
+import { validateAuthToken } from '../lib/d1';
 
-export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) {
+export async function verifyBasicAuth(c: Context<{ Bindings: Env }>): Promise<boolean> {
   const authHeader = c.req.header('Authorization');
-
-  if (!authHeader || !authHeader.startsWith('Basic ')) {
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
+  if (!authHeader || !authHeader.startsWith('Basic ')) return false;
 
   const base64 = authHeader.slice(6);
   const decoded = atob(base64);
   const [username, password] = decoded.split(':');
 
-  if (!c.env.ADMIN_JSON) return c.json({ error: 'Server misconfigured' }, 500);
+  if (!c.env.ADMIN_JSON) return false;
   const adminUser = JSON.parse(c.env.ADMIN_JSON) as { username: string; password: string };
 
-  if (username !== adminUser.username || password !== adminUser.password) {
-    return c.json({ error: 'Invalid credentials' }, 401);
+  return username === adminUser.username && password === adminUser.password;
+}
+
+function clientIp(c: Context<{ Bindings: Env }>): string {
+  return c.req.header('cf-connecting-ip')
+    || c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
+    || 'unknown';
+}
+
+function allowedIps(env: Env): Set<string> {
+  return new Set((env.ADMIN_IPS || '').split(',').map(s => s.trim()).filter(Boolean));
+}
+
+export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) {
+  // Whitelisted IPs skip auth entirely
+  if (allowedIps(c.env).has(clientIp(c))) return next();
+
+  const authHeader = c.req.header('Authorization');
+  if (!authHeader) {
+    return c.json({ error: 'Unauthorized' }, 401);
   }
 
-  await next();
+  if (authHeader.startsWith('Bearer ')) {
+    const token = authHeader.slice(7);
+    const valid = await validateAuthToken(c.env.DB, token);
+    if (!valid) {
+      return c.json({ error: 'Invalid or expired token' }, 401);
+    }
+    await next();
+    return;
+  }
+
+  return c.json({ error: 'Unauthorized' }, 401);
 }
