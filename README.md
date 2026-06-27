@@ -47,6 +47,13 @@ ADMIN_JSON='{"username":"admin","password":"你的密码"}'
 
 - 敏感信息（`GITHUB_TOKEN`、`ADMIN_JSON`、`IMG_BED_TOKEN`）应通过 **Cloudflare Workers Secrets**（`npx wrangler secret put SECRET_NAME`）或 **`.dev.vars`** 管理
 - 如需将项目上传至代码仓库，**务必使用私有仓库**，或通过 CLI 管理密钥，确保密钥不会以明文形式出现在文件中
+- 如果你用cf连接存储库的方式进行自动构建，除了要使用私有仓库外
+```
+GITHUB_TOKEN="你的 GitHub Personal Access Token"
+ADMIN_JSON='{"username":"admin","password":"你的密码"}'
+```
+可以直接写在wrangler.toml，或者在cf仪表台，手动加worker运行时密秘钥。
+更推荐用cli。
 
 因为此项目比较简陋，描写防御规则，IP限速等 api 容易被爆破，可以自己改一下，或者套Cloudflare Access
 
